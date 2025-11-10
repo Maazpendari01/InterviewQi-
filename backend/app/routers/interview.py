@@ -1,13 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Optional
-from ..services.interview_agent import InterviewAgent
+from typing import Dict
+from ..services.interview_graph import InterviewGraph
+from ..services.interview_state import InterviewState, Message
 
 router = APIRouter(prefix="/api/interview", tags=["interview"])
 
-# In-memory sessions (will add DB later)
-sessions = {}
-agent = InterviewAgent()
+sessions: Dict[str, dict] = {}
+graph = InterviewGraph()
 
 class StartRequest(BaseModel):
     category: str = "coding"
@@ -18,54 +18,76 @@ class AnswerRequest(BaseModel):
 
 @router.post("/start")
 async def start_interview(request: StartRequest):
-    """Start new interview"""
-    question_data = agent.get_question(request.category)
-
+    """Start interview with LangGraph"""
     session_id = f"session_{len(sessions) + 1}"
-    sessions[session_id] = {
-        "category": request.category,
-        "current_question": question_data,
-        "answers": []
-    }
+
+    # Initialize state
+    state = InterviewState(
+        messages=[],
+        category=request.category,
+        question_count=0,
+        current_question="",
+        current_question_id="",
+        user_answer="",
+        evaluation="",
+        score=0
+    )
+
+    # Run start node
+    result = graph.start_node(state)
+    state.update(result)
+
+    sessions[session_id] = {"state": state}
 
     return {
         "session_id": session_id,
-        "question": question_data['question'],
-        "question_id": question_data['id']
+        "question": state['current_question'],
+        "question_number": state['question_count']
     }
 
 @router.post("/answer")
 async def submit_answer(request: AnswerRequest):
-    """Submit answer and get evaluation"""
+    """Submit answer"""
     if request.session_id not in sessions:
-        raise HTTPException(status_code=404, detail="Session not found")
+        raise HTTPException(status_code=404, detail="Not found")
 
-    session = sessions[request.session_id]
-    current_q = session['current_question']
+    state = sessions[request.session_id]['state']
+
+    # Update with answer
+    state['user_answer'] = request.answer
+    state['messages'].append(Message(role="candidate", content=request.answer))
 
     # Evaluate
-    evaluation = agent.evaluate_answer(
-        current_q['question'],
-        request.answer,
-        current_q['category']
-    )
+    eval_result = graph.evaluate_node(state)
+    state.update(eval_result)
 
-    # Save
-    session['answers'].append({
-        "question": current_q['question'],
-        "answer": request.answer,
-        "evaluation": evaluation
-    })
+    # Check continue
+    should_continue = graph.should_continue(state)
 
-    return {
-        "evaluation": evaluation,
-        "total_answered": len(session['answers'])
+    response = {
+        "evaluation": state['evaluation'],
+        "score": state['score'],
+        "continue": should_continue == "continue"
     }
 
-@router.get("/{session_id}/summary")
-async def get_summary(session_id: str):
-    """Get interview summary"""
-    if session_id not in sessions:
-        raise HTTPException(status_code=404, detail="Session not found")
+    # Generate follow-up if continuing
+    if should_continue == "continue":
+        followup = graph.followup_node(state)
+        state.update(followup)
+        response["next_question"] = state['current_question']
 
-    return sessions[session_id]
+    return response
+
+@router.get("/{session_id}/transcript")
+async def get_transcript(session_id: str):
+    """Get conversation"""
+    if session_id not in sessions:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    state = sessions[session_id]['state']
+
+    return {
+        "messages": state['messages'],
+        "total_questions": state['question_count'],
+        "final_score": state['score']
+    }
