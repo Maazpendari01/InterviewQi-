@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]  # two levels up: .../backend/tests -> .../backend -> project root
+root_str = str(ROOT)
+if root_str not in sys.path:
+    sys.path.insert(0, root_str)
 
 from  backend.app.services.knowledge_base import InterviewKnowledgeBase
 from backend.app.services.interview_agent import InterviewAgent

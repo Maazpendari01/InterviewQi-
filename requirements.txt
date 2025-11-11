@@ -1,8 +1,28 @@
- uvicorn[standard]==0.27.0
- langchain==0.1.0
-langchain-groq==0.0.1  # Groq instead of OpenAI
-langchain-community==0.0.20
-chromadb==0.4.22
- python-dotenv==1.0.0
-pydantic==2.5.0
- sqlalchemy==2.0.25
+# ─────────── Core Web Framework ───────────
+fastapi==0.121.0
+uvicorn[standard]==0.38.0
+
+# ─────────── LangChain Ecosystem ───────────
+langchain-core==1.0.4
+langchain-community==0.0.27
+langchain-groq==0.0.7
+langsmith==0.4.41
+langgraph-sdk==0.2.9
+
+# ─────────── Vector & Embeddings ───────────
+chromadb==0.7.5
+sentence-transformers==2.5.1
+faiss-cpu==1.8.0
+
+# ─────────── Environment & Utilities ───────────
+python-dotenv==1.2.1
+pydantic==2.12.4
+sqlalchemy==2.0.28
+
+# ─────────── Additional Dependencies ───────────
+annotated-types==0.7.0
+anyio==4.11.0
+httpx==0.28.1
+starlette==0.49.3
+pydantic-settings==2.11.0
+rich==14.2.0

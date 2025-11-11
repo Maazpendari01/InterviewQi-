@@ -1,7 +1,7 @@
 # backend/app/services/interview_agent.py
 
 import os
-from langchain_groq import ChatGroq
+from langchain_community.chat_models import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from .knowledge_base import InterviewKnowledgeBase
 from dotenv import load_dotenv
