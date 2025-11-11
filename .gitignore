@@ -4,31 +4,59 @@ __pycache__/
 *.pyo
 *.pyd
 *.log
-
-# --- Environment & Config ---
-.env
-
-# --- Local DBs ---
-*.sqlite3
-backend/data/chroma_db/
-backend/data/models/
+*.tmp
+*.bak
 
 # --- Virtual Environments ---
 venv/
 .env/
 .env.bak/
 
-# --- Node/Frontend ---
+# --- Environment & Config ---
+.env
+*.env
+
+# --- Local Databases & Cache ---
+*.sqlite3
+*.db
+*.db-journal
+
+# Chroma / Embedding DB
+backend/data/chroma_db/
+backend/backend/
+backend/app/services/backend/
+backend/tests/backend/
+backend/app/services/data/
+backend/app/services/models/
+backend/data/models/
+chroma_db/
+
+# --- Model / Embedding Artifacts ---
+*.bin
+*.safetensors
+*.pt
+*.h5
+*.npy
+*.npz
+
+# --- Frontend / Node ---
 node_modules/
 build/
 dist/
+.cache/
 
-# --- IDE & OS ---
+# --- IDE & OS Files ---
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 
-# --- Temporary ---
-*.tmp
-*.bak
+# --- Project-Specific ---
+# Skip compiled LangChain/Chroma artifacts and cache
+backend/app/services/__pycache__/
+backend/app/routers/__pycache__/
+backend/app/models/__pycache__/
+backend/app/tests/__pycache__/
+
+# --- Others ---
+PY_TREE.txt
