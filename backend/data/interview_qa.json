@@ -83,6 +83,349 @@
         "What would you do differently?",
         "How did you communicate?"
       ]
-    }
+    },
+    {
+  "id": "coding_006",
+  "question": "Implement an algorithm to check if a binary tree is balanced.",
+  "difficulty": "medium",
+  "expert_approach": "Calculate height recursively. At each node, check if |left_height - right_height| <= 1. Return early if unbalanced. Time: O(n), Space: O(h) for recursion stack.",
+  "key_points": [
+    "Recursive height calculation",
+    "Early return optimization",
+    "Handle null nodes",
+    "Time complexity O(n)"
+  ],
+  "common_mistakes": [
+    "Calculating height repeatedly (O(n²))",
+    "Not handling null nodes",
+    "Confusing height with depth"
+  ],
+  "follow_ups": [
+    "What if tree is very deep? Iterative solution?",
+    "How to rebalance an unbalanced tree?",
+    "AVL tree vs regular BST?"
   ]
+},
+{
+  "id": "coding_007",
+  "question": "Given a binary tree, find the lowest common ancestor of two nodes.",
+  "difficulty": "medium",
+  "expert_approach": "Recursive approach: if root is null or equals either node, return root. Recursively search left and right. If both return non-null, root is LCA. If only one returns non-null, that's the LCA. Time: O(n), Space: O(h).",
+  "key_points": [
+    "Recursive DFS traversal",
+    "Base cases (null, found node)",
+    "Post-order processing",
+    "Handle edge cases (nodes not in tree)"
+  ],
+  "common_mistakes": [
+    "Not handling case where one node is ancestor of other",
+    "Using extra space for paths",
+    "Not considering BST properties if applicable"
+  ],
+  "follow_ups": [
+    "What if it's a BST? Optimize?",
+    "What if nodes might not exist in tree?",
+    "How to find LCA of multiple nodes?"
+  ]
+},
+{
+  "id": "coding_008",
+  "question": "Serialize and deserialize a binary tree.",
+  "difficulty": "hard",
+  "expert_approach": "Serialize: Use pre-order traversal, represent null as 'N'. Deserialize: Split by delimiter, recursively build tree. Time: O(n) both, Space: O(n). Alternative: BFS with queue for level-order.",
+  "key_points": [
+    "Choose traversal order (pre-order simplest)",
+    "Handle null nodes explicitly",
+    "Use delimiter for parsing",
+    "Maintain state during deserialization"
+  ],
+  "common_mistakes": [
+    "Not handling null nodes",
+    "Wrong traversal order",
+    "Not using delimiter",
+    "Index management errors"
+  ],
+  "follow_ups": [
+    "How to serialize BST more efficiently?",
+    "Space optimization for skewed tree?",
+    "How to handle very large trees?"
+  ]
+},
+{
+  "id": "coding_009",
+  "question": "Calculate the nth Fibonacci number efficiently.",
+  "difficulty": "easy",
+  "expert_approach": "Use bottom-up DP with two variables (not array). F(n) = F(n-1) + F(n-2), start with F(0)=0, F(1)=1. Time: O(n), Space: O(1). Avoid recursion (exponential) or memoization (O(n) space).",
+  "key_points": [
+    "Bottom-up approach",
+    "Space optimization (two variables)",
+    "Avoid recursive exponential solution",
+    "Handle edge cases (n=0, n=1)"
+  ],
+  "common_mistakes": [
+    "Using recursion without memoization",
+    "Using array when variables suffice",
+    "Integer overflow for large n",
+    "Off-by-one errors"
+  ],
+  "follow_ups": [
+    "Matrix exponentiation for O(log n)?",
+    "How to handle very large n?",
+    "Space complexity improvement?"
+  ]
+},
+{
+  "id": "coding_010",
+  "question": "Find the longest increasing subsequence in an array.",
+  "difficulty": "medium",
+  "expert_approach": "DP approach: dp[i] = length of LIS ending at i. For each i, check all j < i where arr[j] < arr[i], update dp[i] = max(dp[i], dp[j]+1). Time: O(n²), Space: O(n). Optimized: binary search O(n log n).",
+  "key_points": [
+    "DP state definition",
+    "Subproblem relationship",
+    "Track maximum separately",
+    "Binary search optimization exists"
+  ],
+  "common_mistakes": [
+    "Confusing subsequence with subarray",
+    "Not considering all previous elements",
+    "Not tracking maximum length",
+    "Incorrect binary search bounds"
+  ],
+  "follow_ups": [
+    "Print the actual subsequence?",
+    "Optimize to O(n log n)?",
+    "Count number of LIS?"
+  ]
+},
+{
+  "id": "coding_011",
+  "question": "Solve the coin change problem: minimum coins to make amount.",
+  "difficulty": "medium",
+  "expert_approach": "Bottom-up DP: dp[i] = min coins for amount i. For each amount, try each coin: dp[i] = min(dp[i], dp[i-coin]+1). Initialize dp[0]=0, others=infinity. Time: O(amount * coins), Space: O(amount).",
+  "key_points": [
+    "Bottom-up DP approach",
+    "Unbounded knapsack variant",
+    "Initialize with infinity",
+    "Return -1 if impossible"
+  ],
+  "common_mistakes": [
+    "Not handling impossible cases",
+    "Wrong initialization",
+    "Not checking coin <= amount",
+    "Forgetting to add 1 for current coin"
+  ],
+  "follow_ups": [
+    "Print the actual coins used?",
+    "Count number of ways?",
+    "Space optimization possible?"
+  ]
+},
+{
+  "id": "coding_012",
+  "question": "Find the maximum sum subarray (Kadane's algorithm).",
+  "difficulty": "medium",
+  "expert_approach": "Kadane's algorithm: Iterate, maintain current_sum and max_sum. current_sum = max(num, current_sum + num). Update max_sum if current_sum larger. Time: O(n), Space: O(1). Handles all negatives correctly.",
+  "key_points": [
+    "Greedy/DP approach",
+    "Reset when sum becomes negative",
+    "Track global maximum",
+    "Handle all-negative array"
+  ],
+  "common_mistakes": [
+    "Not resetting negative sums",
+    "Confusing max_sum vs current_sum",
+    "Not handling all negatives",
+    "Using O(n²) brute force"
+  ],
+  "follow_ups": [
+    "Return the actual subarray indices?",
+    "2D version (max sum rectangle)?",
+    "Circular array variant?"
+  ]
+},{
+  "id": "coding_013",
+  "question": "Implement breadth-first search (BFS) on a graph.",
+  "difficulty": "easy",
+  "expert_approach": "Use queue. Start with source, mark visited. While queue not empty: dequeue, process, enqueue unvisited neighbors. Time: O(V+E), Space: O(V) for queue and visited set. Use collections.deque for O(1) operations.",
+  "key_points": [
+    "Use queue (FIFO)",
+    "Track visited nodes",
+    "Process by levels",
+    "Handle disconnected graphs"
+  ],
+  "common_mistakes": [
+    "Using stack instead of queue (becomes DFS)",
+    "Not marking visited",
+    "Not handling disconnected components",
+    "Using list as queue (O(n) dequeue)"
+  ],
+  "follow_ups": [
+    "Find shortest path in unweighted graph?",
+    "Level-order traversal variant?",
+    "BFS vs DFS when to use each?"
+  ]
+},
+{
+  "id": "coding_014",
+  "question": "Detect a cycle in a directed graph.",
+  "difficulty": "medium",
+  "expert_approach": "DFS with three states: unvisited (0), visiting (1), visited (2). If we encounter a 'visiting' node during DFS, cycle exists. Time: O(V+E), Space: O(V). Alternative: Kahn's algorithm (topological sort).",
+  "key_points": [
+    "Three-color DFS",
+    "Recursion stack tracking",
+    "Handle all components",
+    "Directed vs undirected difference"
+  ],
+  "common_mistakes": [
+    "Only tracking visited (insufficient for directed)",
+    "Not handling disconnected graphs",
+    "Confusing directed with undirected cycle detection",
+    "Not resetting states properly"
+  ],
+  "follow_ups": [
+    "Cycle in undirected graph?",
+    "Find the cycle path?",
+    "Topological sort approach?"
+  ]
+},
+{
+  "id": "coding_015",
+  "question": "Find the shortest path in a weighted graph (Dijkstra's algorithm).",
+  "difficulty": "hard",
+  "expert_approach": "Priority queue with distances. Initialize dist[source]=0, others=infinity. While queue: extract min, relax neighbors. Time: O((V+E) log V) with heap, Space: O(V). Use heapq in Python. Doesn't work with negative weights.",
+  "key_points": [
+    "Priority queue (min-heap)",
+    "Relaxation step",
+    "Handle visited nodes",
+    "Negative weights limitation"
+  ],
+  "common_mistakes": [
+    "Not using priority queue (wrong complexity)",
+    "Processing visited nodes again",
+    "Not initializing distances correctly",
+    "Using with negative weights"
+  ],
+  "follow_ups": [
+    "Bellman-Ford for negative weights?",
+    "A* search optimization?",
+    "All-pairs shortest path (Floyd-Warshall)?"
+  ]
+},
+{
+  "id": "coding_016",
+  "question": "Check if two strings are anagrams.",
+  "difficulty": "easy",
+  "expert_approach": "Sort both strings, compare. Time: O(n log n), Space: O(1) if in-place sort. Optimized: count character frequencies using hash map. Time: O(n), Space: O(1) (26 letters max).",
+  "key_points": [
+    "Two approaches: sort or count",
+    "Case sensitivity handling",
+    "Space consideration",
+    "Unicode vs ASCII"
+  ],
+  "common_mistakes": [
+    "Not handling case sensitivity",
+    "Not handling spaces/special chars",
+    "Inefficient nested loops",
+    "Not considering empty strings"
+  ],
+  "follow_ups": [
+    "Group anagrams in a list?",
+    "Case insensitive variant?",
+    "Handle Unicode?"
+  ]
+},
+{
+  "id": "coding_017",
+  "question": "Find all palindromic substrings in a string.",
+  "difficulty": "medium",
+  "expert_approach": "Expand around center: for each index, expand outward while characters match. Handle odd (single center) and even (two centers) lengths. Time: O(n²), Space: O(1). Manacher's algorithm achieves O(n) but complex.",
+  "key_points": [
+    "Expand around center technique",
+    "Handle odd and even lengths",
+    "Two-pointer expansion",
+    "Count vs enumerate choice"
+  ],
+  "common_mistakes": [
+    "Only checking odd-length palindromes",
+    "Not handling single character",
+    "Inefficient substring generation",
+    "Off-by-one errors in expansion"
+  ],
+  "follow_ups": [
+    "Longest palindromic substring?",
+    "Manacher's O(n) algorithm?",
+    "DP approach comparison?"
+  ]
+},
+{
+  "id": "coding_018",
+  "question": "Implement string matching (find pattern in text).",
+  "difficulty": "medium",
+  "expert_approach": "KMP algorithm: build failure function (prefix table), use it to skip characters. Time: O(n+m), Space: O(m) for pattern. Simpler: Rabin-Karp with rolling hash. Brute force: O(nm).",
+  "key_points": [
+    "KMP vs Rabin-Karp vs brute force",
+    "Preprocessing pattern",
+    "Rolling hash concept",
+    "Multiple occurrence handling"
+  ],
+  "common_mistakes": [
+    "Using brute force when optimization needed",
+    "Not handling overlapping matches",
+    "Hash collision in Rabin-Karp",
+    "Incorrect failure function"
+  ],
+  "follow_ups": [
+    "Multiple patterns (Aho-Corasick)?",
+    "Approximate matching?",
+    "Regular expression variant?"
+  ]
+},
+{
+  "id": "coding_019",
+  "question": "Find the median of two sorted arrays.",
+  "difficulty": "hard",
+  "expert_approach": "Binary search on smaller array. Partition both arrays such that left half <= right half. Find correct partition using binary search. Time: O(log(min(m,n))), Space: O(1). Naive merge: O(m+n).",
+  "key_points": [
+    "Binary search approach",
+    "Partition concept",
+    "Handle even/odd lengths",
+    "Edge cases (empty arrays)"
+  ],
+  "common_mistakes": [
+    "Merging arrays (inefficient)",
+    "Not using binary search",
+    "Incorrect partition calculation",
+    "Not handling edge cases"
+  ],
+  "follow_ups": [
+    "Kth smallest element?",
+    "More than two arrays?",
+    "Stream of numbers?"
+  ]
+},
+{
+  "id": "coding_020",
+  "question": "Rotate an array by k positions.",
+  "difficulty": "easy",
+  "expert_approach": "Three reversals: reverse entire array, reverse first k, reverse remaining n-k. Time: O(n), Space: O(1) in-place. Handle k > n with k = k % n.",
+  "key_points": [
+    "Three-reverse technique",
+    "In-place modification",
+    "Handle k > length",
+    "Left vs right rotation"
+  ],
+  "common_mistakes": [
+    "Using extra O(n) space",
+    "Not handling k > n",
+    "Confusing left vs right rotation",
+    "Off-by-one in reversals"
+  ],
+  "follow_ups": [
+    "Rotate matrix?",
+    "Rotate with constraints?",
+    "Cyclic rotation pattern?"
+  ]
+}
+  ]
+
 }
