@@ -37,6 +37,245 @@
         "Reverse in groups of k?",
         "Recursive solution?"
       ]
+    },
+    {
+      "id": "coding_003",
+      "question": "Implement a function to check if a string is a palindrome.",
+      "difficulty": "easy",
+      "expert_approach": "Use two-pointer technique from both ends toward the center, comparing characters while ignoring case and non-alphanumeric characters.",
+      "key_points": [
+        "Two-pointer approach",
+        "Edge cases with empty strings",
+        "Case-insensitive comparison"
+      ],
+      "common_mistakes": [
+        "Not handling punctuation or spaces",
+        "Creating unnecessary reversed copies"
+      ],
+      "follow_ups": [
+        "How to optimize for long strings?",
+        "Can you do it in-place?"
+      ]
+    },
+    {
+      "id": "coding_004",
+      "question": "Find the maximum subarray sum (Kadane’s Algorithm).",
+      "difficulty": "medium",
+      "expert_approach": "Iterate through the array keeping track of current sum and maximum sum seen so far. Reset current sum when it becomes negative.",
+      "key_points": [
+        "Kadane’s Algorithm",
+        "Linear time complexity O(n)",
+        "Handles all negative numbers case"
+      ],
+      "common_mistakes": [
+        "Using nested loops O(n²)",
+        "Not resetting current sum correctly"
+      ],
+      "follow_ups": [
+        "Return indices of subarray?",
+        "Handle circular arrays?"
+      ]
+    },
+    {
+      "id": "coding_005",
+      "question": "Implement a function to merge two sorted linked lists.",
+      "difficulty": "medium",
+      "expert_approach": "Use dummy node and two pointers to iteratively link nodes in sorted order; handle remaining nodes at the end.",
+      "key_points": [
+        "Dummy head technique",
+        "Efficient pointer handling",
+        "Handles unequal lengths"
+      ],
+      "common_mistakes": [
+        "Not updating pointers correctly",
+        "Missing last remaining nodes"
+      ],
+      "follow_ups": [
+        "How to do it recursively?",
+        "Can you merge k sorted lists?"
+      ]
+    },
+    {
+      "id": "coding_006",
+      "question": "Implement an algorithm to check if a binary tree is balanced.",
+      "difficulty": "medium",
+      "expert_approach": "Calculate height recursively. At each node, check if |left_height - right_height| <= 1. Return early if unbalanced. Time: O(n), Space: O(h) for recursion stack.",
+      "key_points": [
+        "Recursive height calculation",
+        "Early return optimization",
+        "Handle null nodes",
+        "Time complexity O(n)"
+      ],
+      "common_mistakes": [
+        "Calculating height repeatedly (O(n²))",
+        "Not handling null nodes",
+        "Confusing height with depth"
+      ],
+      "follow_ups": [
+        "What if tree is very deep? Iterative solution?",
+        "How to rebalance an unbalanced tree?",
+        "AVL tree vs regular BST?"
+      ]
+    },
+    {
+      "id": "coding_007",
+      "question": "Given a binary tree, find the lowest common ancestor of two nodes.",
+      "difficulty": "medium",
+      "expert_approach": "Recursive approach: if root is null or equals either node, return root. Recursively search left and right. If both return non-null, root is LCA. If only one returns non-null, that's the LCA. Time: O(n), Space: O(h).",
+      "key_points": [
+        "Recursive DFS traversal",
+        "Base cases (null, found node)",
+        "Post-order processing",
+        "Handle edge cases (nodes not in tree)"
+      ],
+      "common_mistakes": [
+        "Not handling case where one node is ancestor of other",
+        "Using extra space for paths",
+        "Not considering BST properties if applicable"
+      ],
+      "follow_ups": [
+        "What if it's a BST? Optimize?",
+        "What if nodes might not exist in tree?",
+        "How to find LCA of multiple nodes?"
+      ]
+    },
+    {
+      "id": "coding_008",
+      "question": "Serialize and deserialize a binary tree.",
+      "difficulty": "hard",
+      "expert_approach": "Serialize: Use pre-order traversal, represent null as 'N'. Deserialize: Split by delimiter, recursively build tree. Time: O(n) both, Space: O(n). Alternative: BFS with queue for level-order.",
+      "key_points": [
+        "Choose traversal order (pre-order simplest)",
+        "Handle null nodes explicitly",
+        "Use delimiter for parsing",
+        "Maintain state during deserialization"
+      ],
+      "common_mistakes": [
+        "Not handling null nodes",
+        "Wrong traversal order",
+        "Not using delimiter",
+        "Index management errors"
+      ],
+      "follow_ups": [
+        "How to serialize BST more efficiently?",
+        "Space optimization for skewed tree?",
+        "How to handle very large trees?"
+      ]
+    },
+    {
+      "id": "coding_013",
+      "question": "Implement breadth-first search (BFS) on a graph.",
+      "difficulty": "easy",
+      "expert_approach": "Use queue. Start with source, mark visited. While queue not empty: dequeue, process, enqueue unvisited neighbors. Time: O(V+E), Space: O(V) for queue and visited set. Use collections.deque for O(1) operations.",
+      "key_points": [
+        "Use queue (FIFO)",
+        "Track visited nodes",
+        "Process by levels",
+        "Handle disconnected graphs"
+      ],
+      "common_mistakes": [
+        "Using stack instead of queue (becomes DFS)",
+        "Not marking visited",
+        "Not handling disconnected components",
+        "Using list as queue (O(n) dequeue)"
+      ],
+      "follow_ups": [
+        "Find shortest path in unweighted graph?",
+        "Level-order traversal variant?",
+        "BFS vs DFS when to use each?"
+      ]
+    },
+    {
+      "id": "coding_014",
+      "question": "Detect a cycle in a directed graph.",
+      "difficulty": "medium",
+      "expert_approach": "DFS with three states: unvisited (0), visiting (1), visited (2). If we encounter a 'visiting' node during DFS, cycle exists. Time: O(V+E), Space: O(V). Alternative: Kahn's algorithm (topological sort).",
+      "key_points": [
+        "Three-color DFS",
+        "Recursion stack tracking",
+        "Handle all components",
+        "Directed vs undirected difference"
+      ],
+      "common_mistakes": [
+        "Only tracking visited (insufficient for directed)",
+        "Not handling disconnected graphs",
+        "Confusing directed with undirected cycle detection",
+        "Not resetting states properly"
+      ],
+      "follow_ups": [
+        "Cycle in undirected graph?",
+        "Find the cycle path?",
+        "Topological sort approach?"
+      ]
+    },
+    {
+      "id": "coding_015",
+      "question": "Find the shortest path in a weighted graph (Dijkstra's algorithm).",
+      "difficulty": "hard",
+      "expert_approach": "Priority queue with distances. Initialize dist[source]=0, others=infinity. While queue: extract min, relax neighbors. Time: O((V+E) log V) with heap, Space: O(V). Use heapq in Python. Doesn't work with negative weights.",
+      "key_points": [
+        "Priority queue (min-heap)",
+        "Relaxation step",
+        "Handle visited nodes",
+        "Negative weights limitation"
+      ],
+      "common_mistakes": [
+        "Not using priority queue (wrong complexity)",
+        "Processing visited nodes again",
+        "Not initializing distances correctly",
+        "Using with negative weights"
+      ],
+      "follow_ups": [
+        "Bellman-Ford for negative weights?",
+        "A* search optimization?",
+        "All-pairs shortest path (Floyd-Warshall)?"
+      ]
+    },
+    {
+      "id": "coding_019",
+      "question": "Find the median of two sorted arrays.",
+      "difficulty": "hard",
+      "expert_approach": "Binary search on smaller array. Partition both arrays such that left half <= right half. Find correct partition using binary search. Time: O(log(min(m,n))), Space: O(1). Naive merge: O(m+n).",
+      "key_points": [
+        "Binary search approach",
+        "Partition concept",
+        "Handle even/odd lengths",
+        "Edge cases (empty arrays)"
+      ],
+      "common_mistakes": [
+        "Merging arrays (inefficient)",
+        "Not using binary search",
+        "Incorrect partition calculation",
+        "Not handling edge cases"
+      ],
+      "follow_ups": [
+        "Kth smallest element?",
+        "More than two arrays?",
+        "Stream of numbers?"
+      ]
+    },
+    {
+      "id": "coding_020",
+      "question": "Rotate an array by k positions.",
+      "difficulty": "easy",
+      "expert_approach": "Three reversals: reverse entire array, reverse first k, reverse remaining n-k. Time: O(n), Space: O(1) in-place. Handle k > n with k = k % n.",
+      "key_points": [
+        "Three-reverse technique",
+        "In-place modification",
+        "Handle k > length",
+        "Left vs right rotation"
+      ],
+      "common_mistakes": [
+        "Using extra O(n) space",
+        "Not handling k > n",
+        "Confusing left vs right rotation",
+        "Off-by-one in reversals"
+      ],
+      "follow_ups": [
+        "Rotate matrix?",
+        "Rotate with constraints?",
+        "Cyclic rotation pattern?"
+      ]
     }
   ],
   "system_design": [
@@ -59,6 +298,221 @@
       "follow_ups": [
         "Handle 1B requests/day?",
         "Prevent malicious URLs?"
+      ]
+    },
+    {
+      "id": "sysdesign_002",
+      "question": "Design a scalable chat application like WhatsApp or Slack.",
+      "difficulty": "hard",
+      "expert_approach": "Use WebSockets or long polling for real-time communication, store messages in distributed databases like Cassandra, and implement message queues (Kafka) for async delivery.",
+      "key_points": [
+        "Event-driven architecture",
+        "Message queue (Kafka/RabbitMQ)",
+        "Data sharding and replication",
+        "Read/write separation"
+      ],
+      "common_mistakes": [
+        "Relying on single server for connections",
+        "No offline message delivery strategy"
+      ],
+      "follow_ups": [
+        "How would you ensure message ordering?",
+        "Add end-to-end encryption support?"
+      ]
+    },
+    {
+      "id": "sysdesign_003",
+      "question": "Design a content delivery network (CDN) for video streaming.",
+      "difficulty": "hard",
+      "expert_approach": "Distribute video content to edge servers near users. Use caching, consistent hashing, and adaptive bitrate streaming. Monitor edge performance for routing decisions.",
+      "key_points": [
+        "Edge caching and replication",
+        "Load balancing and failover",
+        "Content invalidation strategy",
+        "Adaptive bitrate for streaming"
+      ],
+      "common_mistakes": [
+        "Ignoring cache consistency",
+        "Not handling peak load scaling"
+      ],
+      "follow_ups": [
+        "How would you handle regional outages?",
+        "Add live streaming with minimal latency?"
+      ]
+    },
+    {
+      "id": "sysdesign_004",
+      "question": "Design a distributed cache system like Redis or Memcached.",
+      "difficulty": "hard",
+      "expert_approach": "Components: 1) Cache servers with consistent hashing for distribution, 2) LRU eviction policy, 3) Write-through or write-back strategy, 4) Replication for availability, 5) Monitoring and metrics. Consider: cache misses, thundering herd, cache stampede, hot keys.",
+      "key_points": [
+        "Consistent hashing for distribution",
+        "Eviction policies (LRU, LFU, TTL)",
+        "Write strategies (through, back, around)",
+        "Replication and consistency",
+        "Handle hot keys",
+        "Monitoring cache hit rate"
+      ],
+      "common_mistakes": [
+        "Not discussing eviction policy",
+        "Ignoring hot key problem",
+        "Not considering consistency",
+        "No monitoring strategy"
+      ],
+      "follow_ups": [
+        "How to handle cache invalidation?",
+        "Deal with thundering herd problem?",
+        "Multi-level caching strategy?"
+      ]
+    },
+    {
+      "id": "sysdesign_005",
+      "question": "Design a web crawler for search engines.",
+      "difficulty": "hard",
+      "expert_approach": "Components: 1) URL frontier (queue) with priority, 2) DNS resolver pool, 3) Robots.txt checker, 4) Content downloader, 5) Duplicate detector (bloom filter/hash), 6) Distributed workers. Consider: politeness, priority, freshness, deduplication, robots.txt, scale.",
+      "key_points": [
+        "URL frontier with priority queue",
+        "Distributed workers",
+        "Bloom filter for deduplication",
+        "Politeness policy (rate limiting per domain)",
+        "Robots.txt compliance",
+        "Content parsing and extraction"
+      ],
+      "common_mistakes": [
+        "Not respecting robots.txt",
+        "No politeness policy",
+        "Not handling duplicates",
+        "Ignoring infinite loops (spider traps)"
+      ],
+      "follow_ups": [
+        "How to prioritize which pages to crawl?",
+        "Handle dynamic content (JavaScript)?",
+        "Freshness vs coverage tradeoff?"
+      ]
+    },
+    {
+      "id": "sysdesign_006",
+      "question": "Design a messaging queue system like RabbitMQ or Kafka.",
+      "difficulty": "hard",
+      "expert_approach": "Components: 1) Producers, 2) Message brokers with partitions, 3) Consumers with consumer groups, 4) Persistence layer, 5) Replication. Discuss: message ordering, exactly-once delivery, backpressure, dead letter queue, monitoring.",
+      "key_points": [
+        "Publish-subscribe pattern",
+        "Partitioning for parallelism",
+        "Consumer groups",
+        "Delivery guarantees (at-most, at-least, exactly-once)",
+        "Message retention",
+        "Backpressure handling"
+      ],
+      "common_mistakes": [
+        "Not discussing delivery guarantees",
+        "Ignoring ordering requirements",
+        "No dead letter queue",
+        "Not considering throughput vs latency"
+      ],
+      "follow_ups": [
+        "How to achieve exactly-once delivery?",
+        "Kafka vs RabbitMQ differences?",
+        "Handle slow consumers?"
+      ]
+    },
+    {
+      "id": "sysdesign_007",
+      "question": "Design an autocomplete system (typeahead search).",
+      "difficulty": "medium",
+      "expert_approach": "Data structure: Trie (prefix tree) for in-memory search. For scale: 1) Partition trie by prefix ranges, 2) Cache popular queries, 3) Pre-compute top suggestions, 4) Use CDN for static suggestions. Consider: personalization, query logs, relevance ranking.",
+      "key_points": [
+        "Trie data structure",
+        "Top-k suggestions per node",
+        "Caching popular queries",
+        "Partitioning for scale",
+        "Handling typos (fuzzy matching)",
+        "Personalization via user history"
+      ],
+      "common_mistakes": [
+        "Not using trie structure",
+        "Loading entire dataset in memory",
+        "No caching strategy",
+        "Ignoring relevance ranking"
+      ],
+      "follow_ups": [
+        "How to handle typos?",
+        "Personalization approach?",
+        "Update suggestions in real-time?"
+      ]
+    },
+    {
+      "id": "sysdesign_008",
+      "question": "Design a ride-sharing service like Uber.",
+      "difficulty": "hard",
+      "expert_approach": "Components: 1) Location service (geo-spatial index like QuadTree/Geohash), 2) Matching service, 3) Pricing service (surge), 4) Trip management, 5) Payment. Discuss: real-time updates (WebSocket), ETA calculation, driver-rider matching algorithm, surge pricing.",
+      "key_points": [
+        "Geospatial indexing (QuadTree, Geohash)",
+        "Real-time location updates",
+        "Matching algorithm",
+        "ETA calculation (routing service)",
+        "Surge pricing logic",
+        "Fault tolerance (driver/rider disconnect)"
+      ],
+      "common_mistakes": [
+        "Not using geospatial index",
+        "Ignoring real-time requirements",
+        "No discussion of matching algorithm",
+        "Not considering payment failures"
+      ],
+      "follow_ups": [
+        "How to optimize driver-rider matching?",
+        "Handle peak hours (surge)?",
+        "Fraud detection?"
+      ]
+    },
+    {
+      "id": "sysdesign_009",
+      "question": "Design a content delivery network (CDN).",
+      "difficulty": "hard",
+      "expert_approach": "Components: 1) Origin servers, 2) Edge servers (PoPs globally), 3) DNS for routing, 4) Cache with TTL, 5) Load balancing. Discuss: cache invalidation, geo-routing, origin shield, DDoS protection, HTTPS termination.",
+      "key_points": [
+        "Edge servers at multiple PoPs",
+        "DNS-based routing to nearest edge",
+        "Cache hierarchies (edge, regional, origin)",
+        "Invalidation strategies",
+        "DDoS mitigation",
+        "SSL/TLS termination"
+      ],
+      "common_mistakes": [
+        "Not discussing geographic distribution",
+        "No cache invalidation strategy",
+        "Ignoring security (DDoS)",
+        "Not mentioning DNS routing"
+      ],
+      "follow_ups": [
+        "Cache invalidation approaches?",
+        "Handle cache stampede?",
+        "Video streaming optimization?"
+      ]
+    },
+    {
+      "id": "sysdesign_010",
+      "question": "Design a live commenting system (like YouTube live chat).",
+      "difficulty": "medium",
+      "expert_approach": "Components: 1) WebSocket servers for real-time, 2) Message broker (Kafka), 3) Fan-out service, 4) Persistence (Cassandra for time-series), 5) Moderation service. Discuss: scaling WebSocket connections, message ordering, rate limiting, spam detection.",
+      "key_points": [
+        "WebSocket for real-time bidirectional",
+        "Fan-out architecture",
+        "Message ordering per user",
+        "Rate limiting per user",
+        "Moderation (profanity, spam)",
+        "Horizontal scaling WebSocket servers"
+      ],
+      "common_mistakes": [
+        "Using polling instead of WebSocket",
+        "Not discussing rate limiting",
+        "No moderation strategy",
+        "Ignoring ordering guarantees"
+      ],
+      "follow_ups": [
+        "Handle millions of concurrent users?",
+        "Spam and bot detection?",
+        "Emoji/reaction system?"
       ]
     }
   ],
@@ -85,347 +539,147 @@
       ]
     },
     {
-  "id": "coding_006",
-  "question": "Implement an algorithm to check if a binary tree is balanced.",
-  "difficulty": "medium",
-  "expert_approach": "Calculate height recursively. At each node, check if |left_height - right_height| <= 1. Return early if unbalanced. Time: O(n), Space: O(h) for recursion stack.",
-  "key_points": [
-    "Recursive height calculation",
-    "Early return optimization",
-    "Handle null nodes",
-    "Time complexity O(n)"
-  ],
-  "common_mistakes": [
-    "Calculating height repeatedly (O(n²))",
-    "Not handling null nodes",
-    "Confusing height with depth"
-  ],
-  "follow_ups": [
-    "What if tree is very deep? Iterative solution?",
-    "How to rebalance an unbalanced tree?",
-    "AVL tree vs regular BST?"
-  ]
-},
+      "id": "behavioral_002",
+      "question": "Tell me about a time you had a conflict with a teammate and how you resolved it.",
+      "difficulty": "medium",
+      "expert_approach": "Use the STAR method (Situation, Task, Action, Result). Show emotional intelligence, communication, and collaboration. Focus on resolving the issue constructively and maintaining team productivity.",
+      "key_points": [
+        "Clear communication under pressure",
+        "Empathy and active listening",
+        "Collaborative conflict resolution"
+      ],
+      "common_mistakes": [
+        "Blaming others",
+        "Not taking responsibility",
+        "Failing to mention lessons learned"
+      ],
+      "follow_ups": [
+        "What would you do differently next time?",
+        "How did it affect your teamwork afterward?"
+      ]
+    },
 {
-  "id": "coding_007",
-  "question": "Given a binary tree, find the lowest common ancestor of two nodes.",
-  "difficulty": "medium",
-  "expert_approach": "Recursive approach: if root is null or equals either node, return root. Recursively search left and right. If both return non-null, root is LCA. If only one returns non-null, that's the LCA. Time: O(n), Space: O(h).",
-  "key_points": [
-    "Recursive DFS traversal",
-    "Base cases (null, found node)",
-    "Post-order processing",
-    "Handle edge cases (nodes not in tree)"
-  ],
-  "common_mistakes": [
-    "Not handling case where one node is ancestor of other",
-    "Using extra space for paths",
-    "Not considering BST properties if applicable"
-  ],
-  "follow_ups": [
-    "What if it's a BST? Optimize?",
-    "What if nodes might not exist in tree?",
-    "How to find LCA of multiple nodes?"
+      "id": "behavioral_003",
+      "question": "Tell me about a time you had to learn a new technology quickly.",
+      "difficulty": "medium",
+      "expert_approach": "STAR: Situation (project needed new tech), Task (learn and implement in X days), Action (structured learning: docs, tutorial, small project, ask experts), Result (delivered on time, tech became team standard). Show learning process, not just outcome.",
+      "key_points": [
+        "STAR format",
+        "Structured learning approach",
+        "Time management",
+        "Applied learning (not just theory)",
+        "Share knowledge with team"
+      ],
+      "common_mistakes": [
+        "Just saying 'I learned it'",
+        "No concrete timeline",
+        "Not explaining learning method",
+        "No measurable result"
+      ],
+      "follow_ups": [
+        "How do you evaluate new technologies?",
+        "Ever learned something that didn't work out?",
+        "How do you stay current with tech?"
+      ]
+    },
+    {
+      "id": "behavioral_004",
+      "question": "Describe a situation where you disagreed with a technical decision.",
+      "difficulty": "medium",
+      "expert_approach": "STAR: Situation (team chose approach X), Task (advocate for approach Y), Action (presented data/prototypes, discussed trade-offs respectfully, accepted final decision), Result (outcome + what you learned). Show respect for hierarchy and data-driven argument.",
+      "key_points": [
+        "Present disagreement professionally",
+        "Use data, not opinions",
+        "Respect final decision",
+        "Learn from outcome",
+        "No blame or negativity"
+      ],
+      "common_mistakes": [
+        "Bad-mouthing team/manager",
+        "Being overly stubborn",
+        "Not accepting decision gracefully",
+        "No learning from experience"
+      ],
+      "follow_ups": [
+        "What if you were overruled and it failed?",
+        "How do you handle being wrong?",
+        "When to escalate disagreements?"
+      ]
+    },
+    {
+      "id": "behavioral_005",
+      "question": "Tell me about a time you missed a deadline. How did you handle it?",
+      "difficulty": "hard",
+      "expert_approach": "STAR: Situation (realistic project with deadline), Task (deliver despite obstacles), Action (communicated early, reprioritized, negotiated scope/timeline, worked efficiently), Result (delivered core features, learned estimation lessons). Honesty + ownership.",
+      "key_points": [
+        "Early communication",
+        "Proactive problem-solving",
+        "Negotiation (scope/timeline)",
+        "Take ownership",
+        "Lessons learned",
+        "Preventive measures for future"
+      ],
+      "common_mistakes": [
+        "Blaming others",
+        "Not communicating early",
+        "No learning/improvement mentioned",
+        "Making excuses"
+      ],
+      "follow_ups": [
+        "How do you estimate project timelines now?",
+        "Ever say no to unrealistic deadlines?",
+        "Buffer time in estimates?"
+      ]
+    },
+    {
+      "id": "behavioral_006",
+      "question": "Describe a time you received critical feedback. How did you respond?",
+      "difficulty": "medium",
+      "expert_approach": "STAR: Situation (received feedback on X), Task (improve), Action (listened without defensiveness, asked clarifying questions, created improvement plan, followed up), Result (measurable improvement, better relationship). Show growth mindset.",
+      "key_points": [
+        "Open to feedback",
+        "Asked for specifics",
+        "Created action plan",
+        "Followed up with progress",
+        "Measured improvement",
+        "Thanked feedback giver"
+      ],
+      "common_mistakes": [
+        "Being defensive",
+        "Dismissing feedback",
+        "Not showing improvement",
+        "No follow-up mentioned"
+      ],
+      "follow_ups": [
+        "How do you solicit feedback proactively?",
+        "Ever disagree with feedback?",
+        "360 review experience?"
+      ]
+    },
+    {
+      "id": "behavioral_007",
+      "question": "Tell me about a time you mentored or helped a junior team member.",
+      "difficulty": "easy",
+      "expert_approach": "STAR: Situation (junior joined/struggled), Task (help them succeed), Action (structured mentoring: paired programming, code reviews, encouraged questions, shared resources), Result (they became productive, improved my own skills). Show patience and teaching ability.",
+      "key_points": [
+        "Structured mentoring approach",
+        "Patience and encouragement",
+        "Hands-on help (pair programming)",
+        "Knowledge sharing",
+        "Track their progress",
+        "Mutual learning"
+      ],
+      "common_mistakes": [
+        "Just saying 'I helped them'",
+        "Taking credit for their work",
+        "Not showing specific methods",
+        "No measurable outcome"
+      ],
+      "follow_ups": [
+        "How do you balance mentoring with your own work?",
+        "Ever had a difficult mentee?",
+        "Teaching philosophy?"
+      ]
+    }
   ]
-},
-{
-  "id": "coding_008",
-  "question": "Serialize and deserialize a binary tree.",
-  "difficulty": "hard",
-  "expert_approach": "Serialize: Use pre-order traversal, represent null as 'N'. Deserialize: Split by delimiter, recursively build tree. Time: O(n) both, Space: O(n). Alternative: BFS with queue for level-order.",
-  "key_points": [
-    "Choose traversal order (pre-order simplest)",
-    "Handle null nodes explicitly",
-    "Use delimiter for parsing",
-    "Maintain state during deserialization"
-  ],
-  "common_mistakes": [
-    "Not handling null nodes",
-    "Wrong traversal order",
-    "Not using delimiter",
-    "Index management errors"
-  ],
-  "follow_ups": [
-    "How to serialize BST more efficiently?",
-    "Space optimization for skewed tree?",
-    "How to handle very large trees?"
-  ]
-},
-{
-  "id": "coding_009",
-  "question": "Calculate the nth Fibonacci number efficiently.",
-  "difficulty": "easy",
-  "expert_approach": "Use bottom-up DP with two variables (not array). F(n) = F(n-1) + F(n-2), start with F(0)=0, F(1)=1. Time: O(n), Space: O(1). Avoid recursion (exponential) or memoization (O(n) space).",
-  "key_points": [
-    "Bottom-up approach",
-    "Space optimization (two variables)",
-    "Avoid recursive exponential solution",
-    "Handle edge cases (n=0, n=1)"
-  ],
-  "common_mistakes": [
-    "Using recursion without memoization",
-    "Using array when variables suffice",
-    "Integer overflow for large n",
-    "Off-by-one errors"
-  ],
-  "follow_ups": [
-    "Matrix exponentiation for O(log n)?",
-    "How to handle very large n?",
-    "Space complexity improvement?"
-  ]
-},
-{
-  "id": "coding_010",
-  "question": "Find the longest increasing subsequence in an array.",
-  "difficulty": "medium",
-  "expert_approach": "DP approach: dp[i] = length of LIS ending at i. For each i, check all j < i where arr[j] < arr[i], update dp[i] = max(dp[i], dp[j]+1). Time: O(n²), Space: O(n). Optimized: binary search O(n log n).",
-  "key_points": [
-    "DP state definition",
-    "Subproblem relationship",
-    "Track maximum separately",
-    "Binary search optimization exists"
-  ],
-  "common_mistakes": [
-    "Confusing subsequence with subarray",
-    "Not considering all previous elements",
-    "Not tracking maximum length",
-    "Incorrect binary search bounds"
-  ],
-  "follow_ups": [
-    "Print the actual subsequence?",
-    "Optimize to O(n log n)?",
-    "Count number of LIS?"
-  ]
-},
-{
-  "id": "coding_011",
-  "question": "Solve the coin change problem: minimum coins to make amount.",
-  "difficulty": "medium",
-  "expert_approach": "Bottom-up DP: dp[i] = min coins for amount i. For each amount, try each coin: dp[i] = min(dp[i], dp[i-coin]+1). Initialize dp[0]=0, others=infinity. Time: O(amount * coins), Space: O(amount).",
-  "key_points": [
-    "Bottom-up DP approach",
-    "Unbounded knapsack variant",
-    "Initialize with infinity",
-    "Return -1 if impossible"
-  ],
-  "common_mistakes": [
-    "Not handling impossible cases",
-    "Wrong initialization",
-    "Not checking coin <= amount",
-    "Forgetting to add 1 for current coin"
-  ],
-  "follow_ups": [
-    "Print the actual coins used?",
-    "Count number of ways?",
-    "Space optimization possible?"
-  ]
-},
-{
-  "id": "coding_012",
-  "question": "Find the maximum sum subarray (Kadane's algorithm).",
-  "difficulty": "medium",
-  "expert_approach": "Kadane's algorithm: Iterate, maintain current_sum and max_sum. current_sum = max(num, current_sum + num). Update max_sum if current_sum larger. Time: O(n), Space: O(1). Handles all negatives correctly.",
-  "key_points": [
-    "Greedy/DP approach",
-    "Reset when sum becomes negative",
-    "Track global maximum",
-    "Handle all-negative array"
-  ],
-  "common_mistakes": [
-    "Not resetting negative sums",
-    "Confusing max_sum vs current_sum",
-    "Not handling all negatives",
-    "Using O(n²) brute force"
-  ],
-  "follow_ups": [
-    "Return the actual subarray indices?",
-    "2D version (max sum rectangle)?",
-    "Circular array variant?"
-  ]
-},{
-  "id": "coding_013",
-  "question": "Implement breadth-first search (BFS) on a graph.",
-  "difficulty": "easy",
-  "expert_approach": "Use queue. Start with source, mark visited. While queue not empty: dequeue, process, enqueue unvisited neighbors. Time: O(V+E), Space: O(V) for queue and visited set. Use collections.deque for O(1) operations.",
-  "key_points": [
-    "Use queue (FIFO)",
-    "Track visited nodes",
-    "Process by levels",
-    "Handle disconnected graphs"
-  ],
-  "common_mistakes": [
-    "Using stack instead of queue (becomes DFS)",
-    "Not marking visited",
-    "Not handling disconnected components",
-    "Using list as queue (O(n) dequeue)"
-  ],
-  "follow_ups": [
-    "Find shortest path in unweighted graph?",
-    "Level-order traversal variant?",
-    "BFS vs DFS when to use each?"
-  ]
-},
-{
-  "id": "coding_014",
-  "question": "Detect a cycle in a directed graph.",
-  "difficulty": "medium",
-  "expert_approach": "DFS with three states: unvisited (0), visiting (1), visited (2). If we encounter a 'visiting' node during DFS, cycle exists. Time: O(V+E), Space: O(V). Alternative: Kahn's algorithm (topological sort).",
-  "key_points": [
-    "Three-color DFS",
-    "Recursion stack tracking",
-    "Handle all components",
-    "Directed vs undirected difference"
-  ],
-  "common_mistakes": [
-    "Only tracking visited (insufficient for directed)",
-    "Not handling disconnected graphs",
-    "Confusing directed with undirected cycle detection",
-    "Not resetting states properly"
-  ],
-  "follow_ups": [
-    "Cycle in undirected graph?",
-    "Find the cycle path?",
-    "Topological sort approach?"
-  ]
-},
-{
-  "id": "coding_015",
-  "question": "Find the shortest path in a weighted graph (Dijkstra's algorithm).",
-  "difficulty": "hard",
-  "expert_approach": "Priority queue with distances. Initialize dist[source]=0, others=infinity. While queue: extract min, relax neighbors. Time: O((V+E) log V) with heap, Space: O(V). Use heapq in Python. Doesn't work with negative weights.",
-  "key_points": [
-    "Priority queue (min-heap)",
-    "Relaxation step",
-    "Handle visited nodes",
-    "Negative weights limitation"
-  ],
-  "common_mistakes": [
-    "Not using priority queue (wrong complexity)",
-    "Processing visited nodes again",
-    "Not initializing distances correctly",
-    "Using with negative weights"
-  ],
-  "follow_ups": [
-    "Bellman-Ford for negative weights?",
-    "A* search optimization?",
-    "All-pairs shortest path (Floyd-Warshall)?"
-  ]
-},
-{
-  "id": "coding_016",
-  "question": "Check if two strings are anagrams.",
-  "difficulty": "easy",
-  "expert_approach": "Sort both strings, compare. Time: O(n log n), Space: O(1) if in-place sort. Optimized: count character frequencies using hash map. Time: O(n), Space: O(1) (26 letters max).",
-  "key_points": [
-    "Two approaches: sort or count",
-    "Case sensitivity handling",
-    "Space consideration",
-    "Unicode vs ASCII"
-  ],
-  "common_mistakes": [
-    "Not handling case sensitivity",
-    "Not handling spaces/special chars",
-    "Inefficient nested loops",
-    "Not considering empty strings"
-  ],
-  "follow_ups": [
-    "Group anagrams in a list?",
-    "Case insensitive variant?",
-    "Handle Unicode?"
-  ]
-},
-{
-  "id": "coding_017",
-  "question": "Find all palindromic substrings in a string.",
-  "difficulty": "medium",
-  "expert_approach": "Expand around center: for each index, expand outward while characters match. Handle odd (single center) and even (two centers) lengths. Time: O(n²), Space: O(1). Manacher's algorithm achieves O(n) but complex.",
-  "key_points": [
-    "Expand around center technique",
-    "Handle odd and even lengths",
-    "Two-pointer expansion",
-    "Count vs enumerate choice"
-  ],
-  "common_mistakes": [
-    "Only checking odd-length palindromes",
-    "Not handling single character",
-    "Inefficient substring generation",
-    "Off-by-one errors in expansion"
-  ],
-  "follow_ups": [
-    "Longest palindromic substring?",
-    "Manacher's O(n) algorithm?",
-    "DP approach comparison?"
-  ]
-},
-{
-  "id": "coding_018",
-  "question": "Implement string matching (find pattern in text).",
-  "difficulty": "medium",
-  "expert_approach": "KMP algorithm: build failure function (prefix table), use it to skip characters. Time: O(n+m), Space: O(m) for pattern. Simpler: Rabin-Karp with rolling hash. Brute force: O(nm).",
-  "key_points": [
-    "KMP vs Rabin-Karp vs brute force",
-    "Preprocessing pattern",
-    "Rolling hash concept",
-    "Multiple occurrence handling"
-  ],
-  "common_mistakes": [
-    "Using brute force when optimization needed",
-    "Not handling overlapping matches",
-    "Hash collision in Rabin-Karp",
-    "Incorrect failure function"
-  ],
-  "follow_ups": [
-    "Multiple patterns (Aho-Corasick)?",
-    "Approximate matching?",
-    "Regular expression variant?"
-  ]
-},
-{
-  "id": "coding_019",
-  "question": "Find the median of two sorted arrays.",
-  "difficulty": "hard",
-  "expert_approach": "Binary search on smaller array. Partition both arrays such that left half <= right half. Find correct partition using binary search. Time: O(log(min(m,n))), Space: O(1). Naive merge: O(m+n).",
-  "key_points": [
-    "Binary search approach",
-    "Partition concept",
-    "Handle even/odd lengths",
-    "Edge cases (empty arrays)"
-  ],
-  "common_mistakes": [
-    "Merging arrays (inefficient)",
-    "Not using binary search",
-    "Incorrect partition calculation",
-    "Not handling edge cases"
-  ],
-  "follow_ups": [
-    "Kth smallest element?",
-    "More than two arrays?",
-    "Stream of numbers?"
-  ]
-},
-{
-  "id": "coding_020",
-  "question": "Rotate an array by k positions.",
-  "difficulty": "easy",
-  "expert_approach": "Three reversals: reverse entire array, reverse first k, reverse remaining n-k. Time: O(n), Space: O(1) in-place. Handle k > n with k = k % n.",
-  "key_points": [
-    "Three-reverse technique",
-    "In-place modification",
-    "Handle k > length",
-    "Left vs right rotation"
-  ],
-  "common_mistakes": [
-    "Using extra O(n) space",
-    "Not handling k > n",
-    "Confusing left vs right rotation",
-    "Off-by-one in reversals"
-  ],
-  "follow_ups": [
-    "Rotate matrix?",
-    "Rotate with constraints?",
-    "Cyclic rotation pattern?"
-  ]
-}
-  ]
-
 }

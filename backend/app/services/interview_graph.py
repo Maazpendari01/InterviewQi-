@@ -1,22 +1,25 @@
 from langgraph.graph import StateGraph, END
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
-from typing import List, Optional, TypedDict
+from typing import List
+from dataclasses import dataclass
 import os
 from dotenv import load_dotenv
-
+import time
 
 # Load environment variables
 load_dotenv()
 
 
-# === STATE DEFINITIONS (Using TypedDict for LangGraph compatibility) ===
-class Message(TypedDict):
-    role: str  # "interviewer", "candidate", "evaluator", "user"
+# === STATE DEFINITIONS ===
+@dataclass
+class Message:
+    role: str  # "interviewer", "user", "evaluator"
     content: str
 
 
-class InterviewState(TypedDict):
+@dataclass
+class InterviewState:
     messages: List[Message]
     category: str
     question_count: int
@@ -25,34 +28,99 @@ class InterviewState(TypedDict):
     user_answer: str
     evaluation: str
     score: int
-    repeat_count: int
 
 
-# === KNOWLEDGE BASE MOCK ===
+# === KNOWLEDGE BASE WITH CATEGORY-SPECIFIC QUESTIONS ===
 class InterviewKnowledgeBase:
-    def search(self, query: str, category: str = "", k: int = 1):
-        mock_results = [
-            type(
+    def __init__(self):
+        # Category-specific question banks
+        self.questions = {
+            "coding": [
+                {
+                    "id": "coding_q1",
+                    "question": "Implement a function to reverse a singly linked list. Explain your approach and analyze the time/space complexity.",
+                    "expert_answer": "Use three pointers (prev, curr, next). Iterate through list, reversing links. Time: O(n), Space: O(1).",
+                },
+                {
+                    "id": "coding_q2",
+                    "question": "Design an algorithm to find the longest substring without repeating characters. What data structure would you use?",
+                    "expert_answer": "Use sliding window with HashSet. Track characters seen, expand/contract window. Time: O(n), Space: O(min(n,m)).",
+                },
+                {
+                    "id": "coding_q3",
+                    "question": "Explain how you would implement a LRU (Least Recently Used) cache with O(1) get and put operations.",
+                    "expert_answer": "Use HashMap + Doubly Linked List. HashMap for O(1) access, DLL for O(1) eviction of LRU item.",
+                },
+            ],
+            "system_design": [
+                {
+                    "id": "sysdesign_q1",
+                    "question": "Design a URL shortening service like bit.ly. How would you handle billions of URLs and ensure high availability?",
+                    "expert_answer": "Use base62 encoding, distributed key generation, CDN for redirects, database sharding, cache layer.",
+                },
+                {
+                    "id": "sysdesign_q2",
+                    "question": "How would you design Instagram's news feed? Focus on scalability and real-time updates.",
+                    "expert_answer": "Fan-out on write for small followings, fan-out on read for celebrities. Use Redis cache, message queues, CDN.",
+                },
+                {
+                    "id": "sysdesign_q3",
+                    "question": "Design a distributed rate limiter that can handle millions of requests per second across multiple servers.",
+                    "expert_answer": "Use Redis with sliding window counters, token bucket algorithm, consistent hashing for distribution.",
+                },
+            ],
+            "behavioral": [
+                {
+                    "id": "behavioral_q1",
+                    "question": "Tell me about a time when you had to work with a difficult team member. How did you handle the situation and what was the outcome?",
+                    "expert_answer": "Use STAR method: Situation, Task, Action, Result. Focus on communication, empathy, problem-solving.",
+                },
+                {
+                    "id": "behavioral_q2",
+                    "question": "Describe a situation where you had to make a decision with incomplete information. What was your approach?",
+                    "expert_answer": "Gather available data, assess risks, make informed decision, iterate based on feedback.",
+                },
+                {
+                    "id": "behavioral_q3",
+                    "question": "Tell me about a project you're most proud of. What challenges did you face and how did you overcome them?",
+                    "expert_answer": "Highlight technical challenges, leadership, impact, lessons learned, measurable results.",
+                },
+            ],
+        }
+
+        self.question_index = {"coding": 0, "system_design": 0, "behavioral": 0}
+
+    def search(self, query: str, category: str = "coding", k: int = 1):
+        """Get category-specific questions"""
+        # Normalize category name
+        category = category.lower().replace(" ", "_")
+
+        # Get questions for category
+        category_questions = self.questions.get(category, self.questions["coding"])
+
+        # Get next question in rotation
+        idx = self.question_index.get(category, 0) % len(category_questions)
+        self.question_index[category] = idx + 1
+
+        # Return mock Result objects
+        selected = category_questions[idx : idx + k]
+        results = []
+        for q in selected:
+            result = type(
                 "Result",
                 (),
                 {
-                    "page_content": "To reverse a linked list, use prev, curr, next pointers...",
+                    "page_content": q["expert_answer"],
                     "metadata": {
-                        "question": "Design a function to reverse a linked list.",
-                        "id": "q1",
+                        "question": q["question"],
+                        "id": q["id"],
+                        "category": category,
                     },
                 },
-            ),
-            type(
-                "Result",
-                (),
-                {
-                    "page_content": "For large lists, use chunking and disk storage...",
-                    "metadata": {"question": "How to reverse a huge list?", "id": "q2"},
-                },
-            ),
-        ]
-        return mock_results[:k]
+            )
+            results.append(result)
+
+        return results
 
 
 # === MAIN GRAPH CLASS ===
@@ -66,104 +134,86 @@ class InterviewGraph:
         )
         self.graph = self.build_graph()
 
-    # === HELPER METHOD ===
-    def _get_message_attr(self, msg, attr):
-        """Helper to get message attributes from either dict or Message object"""
-        if isinstance(msg, dict):
-            return msg.get(attr)
-        return getattr(msg, attr, None)
-
     # === NODE 1: Start Interview ===
     def start_node(self, state: InterviewState):
-        results = self.kb.search(f"{state['category']} interview", k=1)
+        """Generate first question based on category"""
+        category = state["category"]
+
+        # Get category-specific question from knowledge base
+        results = self.kb.search(f"{category} interview", category=category, k=1)
+
         question = (
             results[0].metadata["question"] if results else "Explain your approach."
         )
-        q_id = results[0].metadata["id"] if results else "q0"
+        q_id = results[0].metadata["id"] if results else f"{category}_q0"
 
-        msg: Message = {"role": "interviewer", "content": question}
+        interviewer_msg = Message(role="interviewer", content=question)
+
+        print(f"🎯 Starting {category} interview")
+        print(f"📝 Question: {question[:100]}...")
+
         return {
             "current_question": question,
             "current_question_id": q_id,
             "question_count": 1,
-            "messages": state["messages"] + [msg],
-            "repeat_count": 0,
+            "messages": state["messages"] + [interviewer_msg],
         }
 
     # === NODE 2: Candidate Answers ===
     def candidate_answer_node(self, state: InterviewState):
-        # Get last user message
+        # In real app: wait for user input via API
+        # For testing: look for last user message
         for msg in reversed(state["messages"]):
-            if self._get_message_attr(msg, "role") == "user":
-                content = self._get_message_attr(msg, "content")
-                candidate_msg: Message = {"role": "candidate", "content": content}
-                return {
-                    "user_answer": content,
-                    "messages": state["messages"] + [candidate_msg],
-                }
+            if msg.role == "user":
+                return {"user_answer": msg.content}
 
         # Fallback
-        fallback = "Use three pointers: prev, curr, next."
-        candidate_msg: Message = {"role": "candidate", "content": fallback}
         return {
-            "user_answer": fallback,
-            "messages": state["messages"] + [candidate_msg],
+            "user_answer": state.get("user_answer", "I need to think about this...")
         }
 
-    # === NODE 3: Evaluate Answer (WITH REPEAT DETECTION) ===
+    # === NODE 3: Evaluate Answer ===
     def evaluate_node(self, state: InterviewState):
-        user_answer = state["user_answer"].strip().lower()
-        past_answers = [
-            self._get_message_attr(m, "content").strip().lower()
-            for m in state["messages"]
-            if self._get_message_attr(m, "role") == "candidate"
-        ]
+        """Evaluate answer using RAG with category context"""
+        category = state["category"]
 
-        # === REPEAT DETECTION ===
-        if len(past_answers) > 1 and user_answer in past_answers[:-1]:
-            repeat_count = state["repeat_count"] + 1
-            content = (
-                "Score: 30/100\n\n"
-                "Weaknesses:\n"
-                "- You repeated your previous answer verbatim.\n"
-                "- This shows you are not listening to the question.\n"
-                "- In a real interview, this would end the round.\n\n"
-                "Improvement:\n"
-                "Answer the *current* question directly. No copy-paste."
-            )
-            evaluator_msg: Message = {"role": "evaluator", "content": content}
-            return {
-                "evaluation": content,
-                "score": 30,
-                "repeat_count": repeat_count,
-                "messages": state["messages"] + [evaluator_msg],
-            }
-
-        # === NORMAL EVALUATION ===
-        expert_results = self.kb.search(state["current_question"], k=2)
+        # Get expert examples from knowledge base
+        expert_results = self.kb.search(
+            state["current_question"], category=category, k=2
+        )
         expert_context = "\n\n".join([r.page_content for r in expert_results])
+
+        # Category-specific evaluation criteria
+        evaluation_focus = {
+            "coding": "code quality, algorithm efficiency, time/space complexity, edge cases",
+            "system_design": "scalability, reliability, trade-offs, component design, data flow",
+            "behavioral": "STAR method (Situation, Task, Action, Result), specific examples, impact, lessons learned",
+        }
+
+        focus = evaluation_focus.get(category, "overall quality")
 
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
                     "system",
-                    """You are a strict technical interviewer.
+                    f"""You are an expert {category} interviewer. Evaluate the candidate's answer focusing on: {focus}
 
-If the candidate repeats a previous answer → give 30/100 and call it out.
+Provide your evaluation in this exact format:
 
-Otherwise, evaluate normally.
-
-Format:
 Score: X/100
 
 Strengths:
-- ...
+- [specific strength 1]
+- [specific strength 2]
 
 Weaknesses:
-- ...
+- [specific weakness 1]
+- [specific weakness 2]
 
 Improvement:
-...""",
+[one actionable suggestion]
+
+Be constructive, specific, and reference the expert examples.""",
                 ),
                 (
                     "human",
@@ -172,10 +222,7 @@ Improvement:
 Expert Examples:
 {expert_context}
 
-Previous Answers:
-{previous}
-
-Current Answer:
+Candidate Answer:
 {user_answer}
 
 Evaluation:""",
@@ -188,96 +235,112 @@ Evaluation:""",
             {
                 "question": state["current_question"],
                 "expert_context": expert_context,
-                "previous": "\n---\n".join(past_answers[:-1])
-                if len(past_answers) > 1
-                else "None",
                 "user_answer": state["user_answer"],
             }
         )
 
         content = response.content if hasattr(response, "content") else str(response)
-        score = 70
+
+        # Extract score
+        score = 70  # default
         for line in content.split("\n"):
-            if "Score:" in line:
+            if "Score:" in line or "score:" in line.lower():
                 try:
-                    score = int("".join(filter(str.isdigit, line.split(":")[1])))
+                    score_part = line.split(":")[1].strip().split("/")[0]
+                    score = int("".join(filter(str.isdigit, score_part)))
                     break
                 except:
                     pass
 
-        evaluator_msg: Message = {"role": "evaluator", "content": content}
+        evaluator_msg = Message(role="evaluator", content=content)
+
+        print(f"⭐ Score: {score}/100")
+
         return {
             "evaluation": content,
             "score": score,
             "messages": state["messages"] + [evaluator_msg],
-            "repeat_count": state["repeat_count"],
         }
 
-    # === NODE 4: Generate Follow-up (ESCALATION + REPEAT AWARE) ===
+    # === NODE 4: Generate Follow-up ===
     def followup_node(self, state: InterviewState):
-        repeated = state["repeat_count"] > 0
-        score = state["score"]
+        """Generate category-appropriate follow-up question"""
+        category = state["category"]
 
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    """Generate ONE follow-up question.
+        # Get next question from knowledge base instead of generating
+        results = self.kb.search(f"{category} followup", category=category, k=1)
 
-Rules:
-- If repeated answer: Ask "Can you explain your answer in your own words?"
-- If score < 60: Ask foundational
-- If score 60–79: Ask clarification
-- If score 80–89: Ask optimization
-- If score >= 90: Ask system design twist
+        if results and state["question_count"] < 3:
+            new_question = results[0].metadata["question"]
+            new_id = results[0].metadata["id"]
+        else:
+            # Fallback: generate with LLM
+            prompt = ChatPromptTemplate.from_messages(
+                [
+                    (
+                        "system",
+                        f"""You are an expert {category} interviewer. Generate ONE relevant follow-up question.
 
-Be concise. No quotes.""",
-                ),
-                (
-                    "human",
-                    """Question: {question}
-Score: {score}
-Repeated: {repeated}
+If score >= 70: Ask a deeper or optimization question
+If score < 70: Ask a clarifying or foundational question
 
-Next question:""",
-                ),
-            ]
-        )
+Keep it specific to {category} interviews.""",
+                    ),
+                    (
+                        "human",
+                        """Previous question: {question}
+Answer score: {score}/100
+Category: {category}
 
-        chain = prompt | self.llm
-        response = chain.invoke(
-            {
-                "question": state["current_question"],
-                "score": score,
-                "repeated": "Yes" if repeated else "No",
-            }
-        )
+Generate one follow-up question:""",
+                    ),
+                ]
+            )
 
-        content = response.content.strip().strip("\"'").split("\n")[0]
-        interviewer_msg: Message = {"role": "interviewer", "content": content}
+            chain = prompt | self.llm
+            response = chain.invoke(
+                {
+                    "question": state["current_question"],
+                    "score": state["score"],
+                    "category": category,
+                }
+            )
+
+            content = (
+                response.content if hasattr(response, "content") else str(response)
+            )
+            new_question = content.strip().strip("\"'").split("\n")[0]
+            new_id = f"{state['current_question_id']}_followup"
+
+        interviewer_msg = Message(role="interviewer", content=new_question)
+
+        print(f"➡️  Next question: {new_question[:100]}...")
 
         return {
-            "current_question": content,
-            "current_question_id": f"{state['current_question_id']}_f",
+            "current_question": new_question,
+            "current_question_id": new_id,
             "question_count": state["question_count"] + 1,
             "messages": state["messages"] + [interviewer_msg],
         }
 
     # === CONDITIONAL: Continue or End ===
     def should_continue(self, state: InterviewState):
-        if state["repeat_count"] >= 2:
-            return "end"
-        return "continue" if state["question_count"] < 3 else "end"
+        count = state.get("question_count", 0)
+        result = "continue" if count < 3 else "end"
+        print(f"🔄 Question {count}/3 - {result}")
+        return result
 
     # === BUILD GRAPH ===
     def build_graph(self):
         workflow = StateGraph(InterviewState)
 
+        # Nodes
         workflow.add_node("start", self.start_node)
         workflow.add_node("candidate_answer", self.candidate_answer_node)
         workflow.add_node("evaluate", self.evaluate_node)
         workflow.add_node("followup", self.followup_node)
 
+        # Edges
         workflow.set_entry_point("start")
         workflow.add_edge("start", "candidate_answer")
         workflow.add_edge("candidate_answer", "evaluate")
@@ -292,47 +355,35 @@ Next question:""",
 # === TEST SCRIPT ===
 if __name__ == "__main__":
     load_dotenv()
-    graph = InterviewGraph()
-    app = graph.graph
 
-    initial_state: InterviewState = {
-        "messages": [],
-        "category": "coding",
-        "question_count": 0,
-        "current_question": "",
-        "current_question_id": "",
-        "user_answer": "",
-        "evaluation": "",
-        "score": 0,
-        "repeat_count": 0,
-    }
+    # Test all categories
+    for test_category in ["coding", "system_design", "behavioral"]:
+        print(f"\n{'=' * 60}")
+        print(f"Testing {test_category.upper()} Interview")
+        print(f"{'=' * 60}\n")
 
-    config = {"configurable": {"thread_id": "test_123"}}
-    state = initial_state
+        graph = InterviewGraph()
+        app = graph.graph
 
-    print("Starting Interview...\n")
-    for i in range(3):
-        print(f"\n--- Question {i + 1} ---")
-        for output in app.stream(state, config):
+        initial_state = InterviewState(
+            messages=[],
+            category=test_category,
+            question_count=0,
+            current_question="",
+            current_question_id="",
+            user_answer="",
+            evaluation="",
+            score=0,
+        )
+
+        state = initial_state
+
+        # Just test first question generation
+        for output in app.stream(state):
             node = list(output.keys())[0]
             data = output[node]
-            if "messages" in data:
-                last_msg = data["messages"][-1]
-                role = (
-                    last_msg.get("role")
-                    if isinstance(last_msg, dict)
-                    else last_msg.role
-                )
-                content = (
-                    last_msg.get("content")
-                    if isinstance(last_msg, dict)
-                    else last_msg.content
-                )
-                print(f"[{role.upper()}]: {content}")
             state = {**state, **data}
 
-        if i < 2:
-            user_answer = input("\nYour answer: ") or "chunked streaming disk"
-            user_msg: Message = {"role": "user", "content": user_answer}
-            state["messages"].append(user_msg)
-            print(f"[CANDIDATE]: {user_answer}\n")
+            if node == "start":
+                print(f"✅ Generated {test_category} question successfully!")
+                break

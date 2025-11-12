@@ -174,10 +174,9 @@ class DatabaseService:
         query = self.db.query(QuestionResponse)
 
         if user_id:
-            query = query.join(InterviewSession).filter(
-                InterviewSession.user_id == user_id
-            )
-
+            query = query.join(
+                InterviewSession, QuestionResponse.session_id == InterviewSession.id
+            ).filter(InterviewSession.user_id == user_id)
         weak_responses = query.filter(QuestionResponse.score < threshold).all()
 
         weak_by_category = {}
